@@ -3,9 +3,19 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-static void UseInMemoryDatabase(DbContextOptionsBuilder options) => options.UseInMemoryDatabase("VisitCounterDb");
+string GetConnectionString()
+{
+    var s = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    return s;
+}
 
-builder.Services.AddDbContext<AppDbContext>(UseInMemoryDatabase);
+void SetupDatabase(DbContextOptionsBuilder options)
+{
+    options.UseSqlServer(GetConnectionString());
+}
+
+builder.Services.AddDbContext<AppDbContext>(SetupDatabase);
 
 var app = builder.Build();
 
