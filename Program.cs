@@ -1,6 +1,24 @@
+using VisitCounter.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+static void UseInMemoryDatabase(DbContextOptionsBuilder options) => options.UseInMemoryDatabase("VisitCounterDb");
+
+builder.Services.AddDbContext<AppDbContext>(UseInMemoryDatabase);
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+static async Task<string> Page(AppDbContext db)
+{
+    var visit = new Visit();
+    db.Visits.Add(visit);
+    await db.SaveChangesAsync();
+
+    var count = await db.Visits.CountAsync();
+    return $"This page has been visited {count} times.";
+}
+
+app.MapGet("/", Page);
 
 app.Run();
