@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-static void SetupDatabase(DbContextOptionsBuilder options) => options.UseInMemoryDatabase("VisitCounterDB");
-
-builder.Services.AddDbContext<AppDbContext>(SetupDatabase);
+builder.Services.AddDbContext<AppDbContext>(
+    options => options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
 
 var app = builder.Build();
 
