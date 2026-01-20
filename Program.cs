@@ -26,6 +26,8 @@ app.MapGet("/", Page);
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var user = await db.Database.ExecuteSqlRawAsync("SELECT SYSTEM_USER;");
+    Console.WriteLine($"=== Connected to database as: {user} ===");
     await db.Database.MigrateAsync();
 }
 
