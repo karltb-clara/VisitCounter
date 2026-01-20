@@ -23,4 +23,10 @@ static async Task<string> Page(AppDbContext db)
 
 app.MapGet("/", Page);
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+}
+
 app.Run();
